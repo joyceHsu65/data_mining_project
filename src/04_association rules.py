@@ -1,12 +1,31 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/04_association rules.py
 """
-Created on Tue Jun 10 00:27:23 2025
+Association Rule Mining (Apriori)
+=================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 以 Apriori 探勘停車場設施與收費特徵間的關聯。
+- 篩選與「經營型態（type2）」有顯著關聯的規則。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+
+輸出：
+- results/04_rules.csv（通過篩選的關聯規則表）
+
+主要步驟：
+1) 載入處理後資料並刪除無關欄位
+2) 特徵二元化以符合 Apriori 格式
+3) 執行 Apriori（min_support=0.05, max_len=4）
+4) 根據 lift > 1.1 篩選規則
+5) 僅保留後件為「type2=2.0」之結果並輸出 CSV
+
+建議執行：
+- python "src/04_association rules.py"
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 
 # 資料預處理
 parking.drop(["area", "serviceTime", "parking_fare_classification"], axis=1, inplace=True)
@@ -104,5 +123,5 @@ rules = association_rules(frequent_itemset, metric="lift", min_threshold=1.1)
 
 rules = rules[rules['consequents'].apply(lambda x: 'type2=2.0' in x)]
 
-rules.to_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/report3_rules.csv", index=False, encoding="utf_8_sig")
+rules.to_csv("results/04_rules.csv", index=False, encoding="utf_8_sig")
 

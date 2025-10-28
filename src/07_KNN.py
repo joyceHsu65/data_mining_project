@@ -1,12 +1,31 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/07_KNN.py
 """
-Created on Tue Jun 10 11:30:36 2025
+K-Nearest Neighbors (KNN) for type2 分類
+========================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 使用 KNN 分類器預測停車場經營型態。
+- 尋找最佳鄰居數 K 以達最高準確率。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+
+輸出：
+- results/07_X_KNN.csv（訓練特徵集）
+- 終端輸出：最佳 K 值與訓練／測試準確率。
+
+主要步驟：
+1) OneHotEncoder（area, parking_fare_classification）
+2) StandardScaler 標準化數值特徵
+3) 迴圈測試多個 K（如 1~1361）
+4) 輸出最佳 K 與模型正確率
+
+建議執行：
+- python src/07_KNN.py
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 parking.drop(["id"], axis=1, inplace=True)
 parking.info()
 
@@ -45,7 +64,7 @@ y = parking["type2"]
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=20250610)
 
-X.to_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_KNN.csv", index=False, encoding="utf_8_sig")
+X.to_csv("results/07_X_KNN.csv", index=False, encoding="utf_8_sig")
 #===================================================
 # KNN: 
 from sklearn.neighbors import KNeighborsClassifier

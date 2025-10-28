@@ -1,35 +1,33 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/02_prepare.py
 """
-Taipei Parking Lot Data Preprocessing Pipeline
-==============================================
+Data Preprocessing & Feature Engineering
+==========================================================
+
+使用資料：2025/05/06
+Python：3.12.2（Spyder）
 
 目的：
-- 將台北市停車場原始資料（raw CSV + 手工拆分之費用表）清理並整併，
-- 統一型態與類別編碼，
-- 依收費型態進行遺失值規則化填補 + 中位數補值，
-- 產出乾淨資料集供後續 ML / Data Mining 使用。
+- 針對停車場資料進行清理、欄位轉換、遺失值處理與特徵衍生，
+- 產出後續建模所需的處理後資料。
 
 輸入：
 - data/raw/raw_taipei_paring_lot_Info.csv
-- data/processed/preprocessing2_fare.csv
 
 輸出：
-- preprocessing3_taipei_paring_lot_availble.csv（最終乾淨資料）
+- data/processed/preprocessing2_fare.csv                    # 收費欄位拆解/標準化
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv  # 綜合處理後資料表
 
-步驟摘要：
-1) 載入資料
-2) 刪除無用/不完整/重複性高之欄位
-3) 清理 fare 表（欄名、型態）
-4) 合併主表與 fare
-5) 類別欄位標準化（type2 → 公/民營、serviceTime → 24hr）
-6) 篩除無目標/僅大客車場站（專案不討論）
-7) 依收費型態分類 + 規則化填補 (-1)
-8) 其餘遺失值以中位數補值
-9) 輸出 + 摘要檢查
+主要步驟：
+1) 欄位篩選與移除（單一值、極缺失、語意不明、與目標無關）
+2) PAYEX 拆解：小客車/機車/大型機車（日/夜/假日/月租）
+3) 類別標準化：type2（1=停管處經營, 2=非停管處）、serviceTime（0=24hr, 1=非24hr）
+4) 遺失值處理：PAYEX 用 -1 或中位數；其他欄位依型態補值
+5) 產生 parking_fare_classification（僅月租/僅汽車/僅機車/混合式）
 
-作者：徐胤瑄
+建議執行：
+- 直接在 Spyder 執行，或於終端機：python src/02_prepare.py
 """
+
 import pandas as pd
 parking = pd.read_csv("data/raw/raw_taipei_paring_lot_Info.csv")
 #parking.info()

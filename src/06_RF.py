@@ -1,12 +1,32 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/06_RF.py
 """
-Created on Tue Jun 10 10:50:25 2025
+Random Forest Classification for type2
+======================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 使用隨機森林預測停車場經營型態。
+- 比較不同樹數與深度的模型效能，輸出最佳參數組合。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+
+輸出：
+- results/06_X_RF.csv      # Voting 使用的特徵集
+- 終端輸出：各參數組合的訓練與測試準確率。
+
+主要步驟：
+1) OneHotEncoder 處理 area 欄位
+2) 建立 RandomForestClassifier
+3) 測試 n_estimators ∈ {100, 200}, max_depth ∈ {5, 8}
+4) 比較準確率並印出結果
+5) 儲存特徵集供投票模型使用
+
+建議執行：
+- python src/06_RF.py
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 parking.drop(["id"], axis=1, inplace=True)
 parking.info()
 
@@ -35,7 +55,7 @@ y = parking["type2"]
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.2, random_state=20250610)
 
-X_new.to_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_RF.csv", index=False, encoding="utf_8_sig")
+X_new.to_csv("results/06_X_RF.csv", index=False, encoding="utf_8_sig")
 #=========================================================
 
 # random forest

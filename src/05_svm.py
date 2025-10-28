@@ -1,12 +1,32 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/05_svm.py
 """
-Created on Tue Jun 10 09:30:27 2025
+Support Vector Machine (SVM) for type2 分類
+===========================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 使用 SVM（Linear 與 RBF kernel）預測停車場經營型態。
+- 比較不同 C 值對準確率的影響。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+
+輸出：
+- results/05_X_SVM.csv      # Voting 使用的特徵集
+- 終端輸出：各 C 值之訓練與測試準確率。
+
+主要步驟：
+1) OneHotEncoder（area, parking_fare_classification）
+2) StandardScaler 標準化數值特徵
+3) 使用 LinearSVC 與 SVC (RBF kernel, gamma=0.1)
+4) 迴圈測試 C ∈ {0.01, 0.1, 1, 10}
+5) 輸出最佳模型的訓練與測試結果
+
+建議執行：
+- python src/05_svm.py
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 
 # OneHotEncoding
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -42,7 +62,7 @@ y = parking["type2"]
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=20250610)
 
-X.to_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_SVM.csv", index=False, encoding="utf_8_sig")
+X.to_csv("results/05_X_SVM.csv", index=False, encoding="utf_8_sig")
 #=========================================================
 # 建模 SVC
 from sklearn.svm import LinearSVC, SVC

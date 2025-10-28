@@ -1,19 +1,41 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/08_voting.py
 """
-Created on Tue Jun 10 11:49:30 2025
+Voting Classifier (Soft / Hard) Ensemble
+========================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 結合多個分類器（RF、KNN、SVC）形成投票模型，
+- 比較 Soft 與 Hard Voting 的效能。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+- results/03_X_DT.csv
+- results/05_X_SVM.csv
+- results/06_X_RF.csv
+- results/07_X_KNN.csv
+
+輸出：
+- 終端輸出：各基模型與 Voting 模型的訓練／測試準確率。
+
+主要步驟：
+1) 載入前述模型的特徵集
+2) 建立 DT、RF、KNN、SVC 作為基學習器
+3) 分別建立 Soft 與 Hard Voting 模型
+4) 輸出各模型之訓練／測試準確率比較結果
+
+建議執行：
+- python src/08_voting.py
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 parking.drop(["id"], axis=1, inplace=True)
 parking.info()
 
-X_DT = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_DT.csv")
-X_SVM = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_SVM.csv")
-X_RF = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_RF.csv")
-X_KNN = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_KNN.csv")
+X_DT = pd.read_csv("results/03_X_DT.csv")
+X_SVM = pd.read_csv("results/05_X_SVM.csv")
+X_RF = pd.read_csv("results/06_X_RF.csv")
+X_KNN = pd.read_csv("results/07_X_KNN.csv")
 
 y = parking["type2"]
 
@@ -24,7 +46,6 @@ X_train_RF, X_test_RF, y_train_RF, y_test_RF = train_test_split(X_RF, y, test_si
 X_train_KNN, X_test_KNN, y_train_KNN, y_test_KNN = train_test_split(X_KNN, y, test_size=0.2, random_state=20250610)
 
 #===================================================
-
 
 # DT
 from sklearn.tree import DecisionTreeClassifier
@@ -40,7 +61,6 @@ X_test_DT_new=pd.DataFrame([X_test_DT["ChargingStation"], X_test_DT["farecar_wee
 clf1.fit(X_train_DT_new, y_train_DT)
 print("模型建構top5的entropy「訓練」正確率=", clf1.score(X_train_DT_new, y_train_DT))
 print("模型建構top5的entropy「測試」正確率=", clf1.score(X_test_DT_new, y_test_DT))
-
 
 # SVC
 from sklearn.svm import SVC

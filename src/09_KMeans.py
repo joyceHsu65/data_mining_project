@@ -1,12 +1,32 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# src/09_KMeans.py
 """
-Created on Tue Jun 10 18:58:29 2025
+K-Means Clustering for Parking Lot Grouping
+===========================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 使用 K-Means 對停車場進行分群。
+- 比較 K=4 與 K=5 的 SSE，判斷最佳群數。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+
+輸出：
+- results/09_Scree Plot.png         # 陡坡圖
+- results/09_分群輪廓.csv            # 分群結果
+- 終端輸出：K=4、K=5 之 SSE 值與群中心座標。
+
+主要步驟：
+1) OneHotEncoder 處理 area 欄位
+2) StandardScaler 標準化數值特徵
+3) 分別建立 K=4、K=5 模型並列印 SSE
+4) 比較群內誤差下降情形以確認 elbow 點
+
+建議執行：
+- python src/09_KMeans.py
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 parking.drop(["id"], axis=1, inplace=True)
 parking.info()
 
@@ -68,15 +88,14 @@ kmeans2.fit(X)
 print("SSE 5群 =", kmeans2.inertia_)
 print("每一群每個變數的質心 =", kmeans2.cluster_centers_)
 
-# 分五群的輪廓結果
-centroid = pd.DataFrame(kmeans2.cluster_centers_, columns=X.columns)
-X_pred = kmeans2.predict(X)
-print(pd.crosstab(y, X_pred))
-print("用分群來預測分類的正確率為 ＝",(1115+6+143+2+63)/1701) # 正確率為 ＝ 0.7813
-
-# 結果
+# elbow 結果
 if kmeans2.inertia_ < kmeans1.inertia_:
     print("K=5 的 SSE 較小，符合 elbow point，是較佳的群數")
 else:
     print("K=4 的 SSE 較小，可考慮使用 K=4")
 
+# 分五群的輪廓結果
+centroid = pd.DataFrame(kmeans2.cluster_centers_, columns=X.columns)
+X_pred = kmeans2.predict(X)
+print(pd.crosstab(y, X_pred))
+print("用分群來預測分類的正確率為 ＝",(1115+6+143+2+63)/1701) # 正確率為 ＝ 0.7813

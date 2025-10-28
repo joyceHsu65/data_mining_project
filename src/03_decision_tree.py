@@ -1,12 +1,35 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Mon Jun  9 19:03:00 2025
+Decision Tree Classification (CART) for Operator Type (type2)
+=============================================================
 
-@author: 409383712 徐胤瑄
+目的：
+- 以決策樹分類停車場經營型態（停管處 vs 非停管處），
+- 強調可解釋性與規則萃取。
+
+輸入：
+- data/processed/preprocessing3_taipei_paring_lot_availble.csv
+
+輸出（預期）：
+- results/03_X_DT.csv                     # Voting 使用的特徵集
+- rresults/03_CART_param_grid.png         # 模型參數挑選
+- results/03_dt_tree_structure.gv         # 決策樹結構
+- 終端輸出：訓練／測試準確率、特徵重要度、交叉驗證結果。
+
+主要步驟：
+1) 資料切割：train/test = 80/20
+2) 類別編碼：LabelEncoder
+3) 等頻分箱（Equal Frequency）處理偏態數值
+4) 使用 CART 演算法建立多組模型（Gini / Entropy）
+5) 比較各模型表現並繪製決策樹結構
+6) 進行交叉驗證並輸出結果
+
+建議執行：
+- python src/03_decision_tree.py
 """
+
 import pandas as pd
-parking = pd.read_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/preprocessing3_taipei_paring_lot_availble.csv")
+parking = pd.read_csv("data/processed/preprocessing3_taipei_paring_lot_availble.csv")
 parking.info()
 parking.drop(["id"], axis=1, inplace=True)
 
@@ -84,7 +107,8 @@ X = pd.DataFrame([area, parking["type"], totalcar, totalmotor, totalbike, Pregna
 X.columns = ["area", "type", "totalcar", "totalmotor", "totalbike", "Pregnancy_First", "Handicap_First", "totallargemotor", "ChargingStation", "serviceTime", "farecar_weekday", "farecar_night", "farecar_haliday", "farecar_month", "faremotor_day_hour", "faremotor_month", "largemotor_month", "parking_fare_classification"]
 y = parking["type2"]
 
-X.to_csv("/Users/joycehsu/大學/113-2/2資料探勘/data mining code files_報告/X_DT.csv", index=False, encoding="utf_8_sig")
+X.to_csv("results/03_X_DT.csv", index=False, encoding="utf_8_sig")
+
 #=====================================
 # 切割80%建模20%測試正確率(請展示程式碼)
 from sklearn.model_selection import train_test_split
@@ -192,7 +216,7 @@ class_names = [str(cls) for cls in clf4.classes_]
 tree_data = tree.export_graphviz(clf4, out_file=None, feature_names=X_train_new4.columns, class_names=class_names, filled=True, proportion=True, rounded=True, special_characters=True)
 graph = graphviz.Source(tree_data)
 graph.format="png"
-graph.render("tree.gv", view=True)
+graph.render("03_dt_tree_structure.gv", view=True)
 
 #=====================================================
 #交叉驗證
