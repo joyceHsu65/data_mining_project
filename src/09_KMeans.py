@@ -68,6 +68,12 @@ kmeans2.fit(X)
 print("SSE 5群 =", kmeans2.inertia_)
 print("每一群每個變數的質心 =", kmeans2.cluster_centers_)
 
+# 分五群的輪廓結果
+centroid = pd.DataFrame(kmeans2.cluster_centers_, columns=X.columns)
+X_pred = kmeans2.predict(X)
+print(pd.crosstab(y, X_pred))
+print("用分群來預測分類的正確率為 ＝",(1115+6+143+2+63)/1701) # 正確率為 ＝ 0.7813
+
 # 結果
 if kmeans2.inertia_ < kmeans1.inertia_:
     print("K=5 的 SSE 較小，符合 elbow point，是較佳的群數")
